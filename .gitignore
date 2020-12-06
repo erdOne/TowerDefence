@@ -130,3 +130,5 @@ dmypy.json
 
 # logs
 out.txt
+_setup.cfg
+stubs/*
