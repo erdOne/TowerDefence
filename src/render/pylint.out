@@ -1,0 +1,9 @@
+************* Module terrain_renderer
+terrain_renderer.py:3:0: E0401: Unable to import 'render.wall_renderer' (import-error)
+terrain_renderer.py:6:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module wall_renderer
+wall_renderer.py:10:0: E0401: Unable to import 'utils' (import-error)
+
+-----------------------------------
+Your code has been rated at 8.28/10
+
