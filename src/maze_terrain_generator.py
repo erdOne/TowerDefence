@@ -1,5 +1,5 @@
 """A class that generate maze-like terrains."""
-from utils import generate_2d_array
+from utils import generate_2d_array, Object, directions
 from maze_generator import MazeGenerator
 
 
@@ -43,7 +43,7 @@ class MazeTerrainGenerator():
         for i in range(self.map_size):
             for j in range(self.map_size):
                 if get(i, j):
-                    for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                    for dx, dy in Object.values(directions):
                         if get(i+dx, j+dy):
                             break
                     else:

@@ -1,7 +1,7 @@
 """A class that generate maze-like terrains."""
 import random
 from sortedcontainers import SortedDict
-from utils import generate_2d_array
+from utils import generate_2d_array, directions, Object
 
 
 class MazeGenerator():
@@ -63,7 +63,7 @@ class MazeGenerator():
             return
         self.used_set.add(point)
         self.remove_wall_between(point, parent)
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        for dx, dy in Object.values(directions):
             self.insert_point(((point[0]+dx, point[1]+dy), point))
         if len(self.used_set) < self.field_size**2:
             self.process_next()

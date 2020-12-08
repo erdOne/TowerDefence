@@ -1,3 +1,4 @@
+# pylint: disable=missing-function-docstring
 """General Utility functions."""
 
 
@@ -12,14 +13,32 @@ class Object:
     """Mimic JS behavior."""
 
     def __init__(self, **kwargs):
-        """Init the object with dict."""
         self.__keys = []
         for i in kwargs:
             self.__dict__[i] = kwargs[i]
             self.__keys.append(i)
 
-    def foo_method(self):
-        """Foo."""
+    @staticmethod
+    def items(obj):
+        # pylint: disable=protected-access
+        return [(key, obj.__dict__[key]) for key in obj._Object__keys]
 
-    def bar_method(self):
-        """Bar."""
+    @staticmethod
+    def keys(obj):
+        return obj.__dict__["__keys"].copy()
+
+    @staticmethod
+    def values(obj):
+        # pylint: disable=protected-access
+        return [obj.__dict__[key] for key in obj._Object__keys]
+
+    def __iter__(self):
+        return iter(Object.items(self))
+
+
+directions = Object(
+    forward=(0, 1),
+    backward=(0, -1),
+    left=(-1, 0),
+    right=(1, 0)
+)
