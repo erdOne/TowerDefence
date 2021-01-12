@@ -7,7 +7,7 @@ map_params = Object(
     cell_size=3,
     wall_width=1,
     field_size=16,
-    town_size=2,
+    core_size=2,
     seed=10,
     colors=Object(
         wall=(1, 0.5, 0.5, 1),
@@ -25,6 +25,10 @@ key_map = Object(
     utility=Object(
         pause="escape"
     )
+)
+
+player = Object(
+    size=2
 )
 
 physics = Object(
