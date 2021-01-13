@@ -18,6 +18,10 @@ class Player:
 
     def update_pos(self, key_state, dt, is_walkable):
         """Update position from key state."""
+        if not is_walkable(self.pos):
+            self.pos += Vec3(config.map_params.unit_size, 0, 0)
+            return
+
         self.prepos = Vec3(self.pos)
         direction = Vec3(0, 0, 0)
         for key, vec in directions:

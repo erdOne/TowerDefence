@@ -44,10 +44,3 @@ directions = Object(
     left=(-1, 0),
     right=(1, 0)
 )
-
-def make_promise(func):
-    loop = asyncio.get_event_loop()
-    future = loop.create_future()
-    func(lambda val: future.set_result(val))
-
-    return future

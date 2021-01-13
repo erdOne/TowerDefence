@@ -1,6 +1,6 @@
 """Generate a geom node from heightmap."""
 from os import getcwd
-from panda3d.core import (CollisionNode, CollisionBox, Point3, Vec3, NodePath)
+from panda3d.core import (CollisionNode, CollisionBox, Point3, Vec3, NodePath, CardMaker, TextureStage)
 
 from geom import GeomBuilder
 from config import map_params
@@ -13,20 +13,13 @@ def render_wall(pos, terrain, variant, parent, loader):
         return
     if terrain.count(True) == 3:
         orient = terrain.index(False)
-        type = f"concave_{3-variant}_b"
-        model = loader.loadModel(
-            getcwd()+f"/models/concave_{3-variant}_b_flat.bam")
-        model.setHpr(terrain.index(False)*90+180, 90, 0)
+        mod = f"concave_{3-variant}"
     elif terrain.count(True) == 2:
         orient = 3 if terrain[0] and terrain[3] else terrain.index(True)
-        type = f"wall_{2-orient%2}_b"
-        model = loader.loadModel(
-            getcwd()+f"/models/wall_{2-orient%2}_b_flat.bam"
-        )
-        model.setHpr(orient*90+180, 90, 0)
+        mod = f"wall_{2-orient%2}"
     elif terrain.count(True) == 1:
         orient = terrain.index(True)
-        type = f"convex_{variant}"
+        mod = f"convex_{variant}"
 
     # def callback(model, orient, parent, pos):
     #     model.setHpr(orient*90+180, 90, 0)
@@ -40,7 +33,7 @@ def render_wall(pos, terrain, variant, parent, loader):
     #                     model, False, callback, [*args]),
     #                  extraArgs=[orient, parent, pos]
     #                  )
-    model = loader.loadModel(getcwd()+f"/models/{type}_flat.bam")
+    model = loader.loadModel(getcwd()+f"/models/{mod}_low_flat.bam")
     model.flattenStrong()
     model.setHpr(orient*90+180, 90, 0)
     model.reparentTo(parent)
@@ -67,20 +60,33 @@ class TerrainRenderer:
 
     def create_geom(self, loader):
         """Creates self.geom_node from self.terrain_map."""
-        geom_builder = GeomBuilder('floor')
+        # geom_builder = GeomBuilder('floor')
         map_size = len(self.terrain_map)
         unit_size = map_params.unit_size
         start_pos = -map_size*unit_size/2
-        colors = map_params.colors
+        # colors = map_params.colors
 
-        geom_builder.add_rect(
-            colors.floor,
-            start_pos, start_pos, 0,
-            -start_pos, -start_pos, 0
+        # geom_builder.add_rect(
+        #     colors.floor,
+        #     start_pos, start_pos, 0,
+        #     -start_pos, -start_pos, 0
+        # )
+        card_maker = CardMaker("cm")
+        card_maker.setFrame(
+            Point3(-start_pos, -start_pos, 0),
+            Point3(+start_pos, -start_pos, 0),
+            Point3(+start_pos, +start_pos, 0),
+            Point3(-start_pos, +start_pos, 0)
         )
+        card_maker.setColor(map_params.colors.floor)
 
-        floor_node = NodePath(geom_builder.get_geom_node())
+        floor_node = NodePath(card_maker.generate())
         floor_node.reparentTo(self.geom_node)
+        # floor_node.setHpr(0, 90, 0)
+        # floor_node.setPos(0, 0, 0)
+        tex = loader.loadTexture('models/floor.png')
+        floor_node.setTexture(tex, 1)
+        floor_node.setTexScale(TextureStage.getDefault(), map_size, map_size)
 
         def get(i, j):
             return isinstance(self.get_tile(i, j), Wall)
@@ -140,8 +146,7 @@ class TerrainRenderer:
                     start_pos+i*unit_size, start_pos+j*unit_size
                 )
                 geom_builder.add_rect(
-                    (colors.wall if isinstance(self.get_tile(i, j), Wall)
-                        else colors.floor),
+                    self.get_tile(i, j).color,
                     current_position[0],
                     current_position[1], 0,
                     current_position[0]+10,

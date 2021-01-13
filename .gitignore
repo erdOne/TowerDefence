@@ -132,3 +132,5 @@ dmypy.json
 out.txt
 _setup.cfg
 stubs/*
+
+test.py

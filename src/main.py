@@ -64,10 +64,11 @@ class MyApp:
         self.base.accept(config.key_map.utility.pause, self.toggle_pause)
         self.base.accept("q", self.debug)
         self.base.cam.node().setCameraMask(BitMask32.bit(0))
+        self.base.setBackgroundColor(*config.map_params.colors.sky)
 
         self.player = Player()
-        self.base.taskMgr.add(lambda task: self.move_player_task(), "move_player_task")
-        # self.base.taskMgr.add(self.terrain.start_up, "move_player_task")
+        self.base.taskMgr.add(self.move_player_task, "move_player_task")
+        self.base.taskMgr.add(lambda task: self.terrain.start_up(), "start up")
         self.base.setFrameRateMeter(True)
 
     # Define a procedure to move the camera.
@@ -88,7 +89,7 @@ class MyApp:
         fog = Fog("Scene fog")
         fog.setColor(0.7, 0.7, 0.7)
         fog.setExpDensity(0.01)
-        self.terrain.geom_node.setFog(fog)
+        # self.terrain.geom_node.setFog(fog)
         self.base.camLens.setFar(300.0)
         return fog
 
@@ -98,7 +99,7 @@ class MyApp:
         for i, dirs in zip(range(5), Object.values(directions) + [0]):
             dlight = DirectionalLight(f"directional light {i}")
             if i == 4:
-                dlight.setColor((0.5, 0.5, 0.5, 0.5))
+                dlight.setColor((0.5, 0.5, 0.5, 0.8))
             else:
                 dlight.setColor((2, 2, 2, 2))
             light_nodes[i] = self.base.render.attachNewNode(dlight)
