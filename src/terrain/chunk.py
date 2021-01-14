@@ -33,7 +33,7 @@ class Chunk(TerrainRenderer):
         fsize = len(self.terrain_map) // 2
         for i in range(fsize-csize, csize+fsize+1):
             for j in range(fsize-csize, csize+fsize+1):
-                self.terrain_map[i][j] = Center
+                self.terrain_map[i][j] = Center()
 
     def show(self):
         self.geom_node.show()

@@ -97,7 +97,7 @@ class Terrain:
 
     def get_tile(self, pos):
         if self.get_chunk_no(pos) not in self.chunk_map:
-            return Empty
+            return Empty()
         return self.chunk_map[
             self.get_chunk_no(pos)
         ].get_tile(*self.get_chunk_coord(pos))

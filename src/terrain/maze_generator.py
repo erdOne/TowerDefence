@@ -59,24 +59,22 @@ class MazeGenerator():
     def process_point(self, point, parent):
         """Link the point to its parent, remove the wall between."""
         if not self.in_range(point):
-            self.process_next()
             return
         if point in self.used_set:
-            self.process_next()
             return
         self.used_set.add(point)
         self.remove_wall_between(point, parent)
         for dx, dy in Object.values(directions):
             self.insert_point(((point[0]+dx, point[1]+dy), point))
-        self.process_next()
 
     def process_next(self):
         """Process a random point in pending set."""
         try:
-            key = next(iter(self.pending_set))
-            next_point = self.pending_set[key]
-            del self.pending_set[key]
-            self.process_point(*next_point)
+            while True:
+                key = next(iter(self.pending_set))
+                next_point = self.pending_set[key]
+                del self.pending_set[key]
+                self.process_point(*next_point)
         except StopIteration:
             pass
 

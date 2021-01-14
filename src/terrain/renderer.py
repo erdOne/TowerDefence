@@ -78,7 +78,7 @@ class TerrainRenderer:
         try:
             return self.terrain_map[i][j]
         except IndexError:
-            return Empty
+            return Empty()
 
     def create_geom(self, loader):
         """Creates self.geom_node from self.terrain_map."""

@@ -3,9 +3,6 @@ from utils import color
 
 
 class Tile:
-    # def __init__(self, pos):
-    #     self.pos = pos
-
     def enemy_walkable(self):
         return self.walkable or self.trampleable
 
