@@ -20,9 +20,12 @@ class Enemy:
     dps = 10
     size = 1
     omega = 720
+    height = 15
 
     def __init__(self, loader, parent, path_finder, pos):
         self.model = loader.loadModel(abspath(f"models/{self.name}.dae"))
+        self.model.clearModelNodes()
+        self.model.flattenStrong()
         self.model.reparentTo(parent)
         self.model.setPos(pos)
         self.model.setScale(10.0)
@@ -67,9 +70,9 @@ class Enemy:
             self.cd_left = self.cd_max
             return
 
-        if not get_tile((cur_pos[0], cur_pos[1])).walkable:
+        if get_tile((cur_pos[0], cur_pos[1])).trampleable:
             self.model.setHpr(self.model.getHpr()[0]+dt*self.omega, 90, 0)
-            self.trample(dt)
+            self.trample(dt, get_tile((cur_pos[0], cur_pos[1])))
             return
 
         dis = Vec3(*self.moves[-1], 0.0)*config.map_params.unit_size - cur_pos
@@ -107,5 +110,5 @@ class Enemy:
         self.model.setPos(cur_pos)
         self.model
 
-    def trample(self, damage):
-        pass
+    def trample(self, dt, tile):
+        tile.trample(dt*self.dps)

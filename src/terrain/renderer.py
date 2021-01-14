@@ -71,8 +71,9 @@ class TerrainRenderer:
         """Init the class."""
         self.terrain_map = [[]]
         self.geom_node = NodePath('terrain')
-        self.minimap_node = None
+        self.minimap_node = NodePath('minimap')
         self.coll_node = CollisionNode('cnode')
+        self.geom_builder = GeomBuilder('floor')
 
     def get_tile(self, i, j):
         """Get element from terrain_map."""
@@ -117,8 +118,7 @@ class TerrainRenderer:
         wall_count = 0
         for i in range(map_size-1):
             for j in range(map_size-1):
-                if any([get(i, j), get(i+1, j),
-                            get(i+1, j+1), get(i, j+1)]):
+                if any([get(i, j), get(i+1, j), get(i+1, j+1), get(i, j+1)]):
                     wall_count += 1
 
         def callback():
@@ -169,24 +169,9 @@ class TerrainRenderer:
 
     def create_minimap(self):
         """Creates self.minimap_node from self.terrain_map."""
-        geom_builder = GeomBuilder('floor')
         map_size = len(self.terrain_map)
-        unit_size = map_params.unit_size
-        start_pos = -map_size*unit_size/2
 
         for i in range(map_size):
             for j in range(map_size):
-                current_position = (
-                    start_pos+i*unit_size, start_pos+j*unit_size
-                )
-                geom_builder.add_rect(
-                    self.get_tile(i, j).color,
-                    current_position[0],
-                    current_position[1], 0,
-                    current_position[0]+10,
-                    current_position[1]+10, 0
-                )
-
-        self.minimap_node = NodePath(geom_builder.get_geom_node())
-        self.minimap_node.clearModelNodes()
-        self.minimap_node.flattenStrong()
+                self.get_tile(i, j).generate((i, j)).reparentTo(
+                    self.minimap_node)

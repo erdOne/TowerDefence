@@ -23,8 +23,8 @@ class Chunk(TerrainRenderer):
         self.terrain_map = MazeTerrainGenerator().generate(
             config.map_params.seed ^ hash(self.pos), origin
         )
-        if not origin:
-            self.set_center()
+        # if not origin:
+        #     self.set_center()
         self.create_geom(loader)
         self.create_minimap()
 
@@ -34,6 +34,11 @@ class Chunk(TerrainRenderer):
         for i in range(fsize-csize, csize+fsize+1):
             for j in range(fsize-csize, csize+fsize+1):
                 self.terrain_map[i][j] = Center()
+
+    def set_tile(self, pos, value):
+        i, j = pos
+        self.terrain_map[i][j] = value
+        value.generate((i, j)).reparentTo(self.minimap_node)
 
     def show(self):
         self.geom_node.show()

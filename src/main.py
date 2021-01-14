@@ -66,7 +66,8 @@ class MyApp:
         self.toggle_pause()
 
         Enemy = EnemyFactory(
-            self.base.loader, self.base.render, self.terrain.path_finder
+            self.base.loader, self.base.render,
+            self.terrain.path_finder
         )
 
         self.enemies = [Enemy(Vec3(100, 100, 0)), Enemy(Vec3(100, 110, 0))]
@@ -110,20 +111,24 @@ class MyApp:
 
     def set_lights(self):
         """Set up the lights."""
-        light_nodes = [None]*5
-        for i, dirs in zip(range(5), Object.values(directions) + [0]):
+        light_nodes = [None]*9
+        for i, dirs in zip(range(9), [0] + Object.values(directions)*2):
             dlight = DirectionalLight(f"directional light {i}")
-            if i == 4:
+            if i <= 4:
                 dlight.setColor((0.5, 0.5, 0.5, 0.8))
             else:
                 dlight.setColor((2, 2, 2, 2))
             light_nodes[i] = self.base.render.attachNewNode(dlight)
-            if i == 4:
+            if i == 0:
                 light_nodes[i].setPos(0, 0, 1)
             else:
-                light_nodes[i].setPos(dirs[0]*5, dirs[1]*5, 0)
+                light_nodes[i].setPos(*dirs, 0)
             light_nodes[i].lookAt(0, 0, 0)
-            self.base.render.setLight(light_nodes[i])
+            if i <= 4:
+                self.base.render.setLight(light_nodes[i])
+                self.terrain.terrain_node.clearLight(light_nodes[i])
+            else:
+                self.terrain.terrain_node.setLight(light_nodes[i])
 
         alight = AmbientLight('ambient light')
         alight.setColor((0.3, 0.3, 0.3, 1))
@@ -187,6 +192,13 @@ class MyApp:
             for enemy in self.enemies:
                 enemy.move(ClockObject.getGlobalClock().getDt(),
                            self.terrain.get_tile)
+        return Task.cont
+
+    def tower_task(self, task):
+        if not self.paused:
+            for tower in self.terrain.towers:
+                tower.check_shoot(ClockObject.getGlobalClock().getDt(),
+                    self.enemies, self.terrain.get_tile)
         return Task.cont
 
     def run(self):

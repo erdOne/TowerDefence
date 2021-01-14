@@ -2,6 +2,10 @@
 """General Utility functions."""
 
 from os import path
+# import math
+# from config import map_params
+
+# from panda3d import Vec3
 
 
 def generate_2d_array(x_size, y_size=None, default=None):
@@ -57,3 +61,25 @@ def color(hex_col):
 
 def abspath(paths):
     return path.splitdrive(path.abspath(paths))[1].replace('\\', '/')
+
+# def place(a, l):
+#     return (round(a[0]/l), round(a[1]/l))
+#
+# def view(mypos, theta, phi, dist, get_tile):
+#     length = map_params.unit_size
+#     direction = (math.cos(theta)*math.cos(phi),math.sin(theta)*math.cos(phi),-math.sin(phi))
+#     direction_length = (1+direction[2]**2)**0.5
+#     direction_unit = (direction[0] * length / direction_length / 10 , direction[1] * length / direction_length / 10 , direction[2] * length / direction_length / 10 )
+#     current = (mypos[0], mypos[1],mypos[2])
+#     myplace = place(mypos, length)
+#     for _ in range(dist*2):
+#         current = ( current[0] + direction_unit[0] ,  current[1] + direction_unit[1] , current[2] + direction_unit[2])
+#         if not myplace == place(current, length):
+#             if get_tile(current).height < -1 :
+#                 return None
+#             elif current[2] < 0 :
+#                 return None
+#             elif current[2] < get_tile(current).height:
+#                 return ( current[0] , current[1] , 0 )
+#
+#

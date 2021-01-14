@@ -6,7 +6,7 @@ from panda3d.core import NodePath, BitMask32, StencilAttrib
 from terrain.chunk import Chunk
 from terrain.pathfinder import PathFinder
 from config import map_params
-from tiles import Empty
+from tiles import Empty, Proxy, Center, Tower
 
 constant_one_stencil = StencilAttrib.make(
     1, StencilAttrib.SCFAlways,
@@ -29,6 +29,8 @@ class Terrain:
         self.geom_node = NodePath("terrain")
         self.geom_node.reparentTo(render)
         self.geom_node.hide(BitMask32.bit(1))
+        self.terrain_node = NodePath("ground")
+        self.terrain_node.reparentTo(self.geom_node)
 
         self.minimap_node = NodePath("minimap")
         self.minimap_node.reparentTo(render)
@@ -43,6 +45,8 @@ class Terrain:
         self.active_chunks = set()
         self.path_finder = PathFinder(self.get_tile)
 
+        self.towers = set()
+
     def generate(self, pos):
         """Generates everything."""
         print(f"generating {pos}")
@@ -50,7 +54,7 @@ class Terrain:
         new_chunk = Chunk(pos)
         self.chunk_map[pos] = new_chunk
         new_chunk.generate(self.loader)
-        new_chunk.geom_node.reparentTo(self.geom_node)
+        new_chunk.geom_node.reparentTo(self.terrain_node)
         new_chunk.geom_node.setPos(
             (pos[0]*self.chunk_size, pos[1]*self.chunk_size, 0))
         new_chunk.minimap_node.reparentTo(self.minimap_node)
@@ -105,6 +109,8 @@ class Terrain:
     def start_up(self):
         """Generate the first nine chunks."""
         self.show((0, 0))
+        self[(0, 0)] = Center(self.loader, self.geom_node, (0, 0))
+        self[(4, 4)] = Tower(self.loader, self.geom_node, (4, 4))
         # for i in range(-1, 2):
         #     for j in range(-1, 2):
         #         self.show((i, j))
@@ -123,4 +129,12 @@ class Terrain:
         ].set_tile(self.get_chunk_coord(item), value)
 
     def __setitem__(self, item, value):
-        pass
+        if isinstance(value, Tower):
+            self.towers.add(value)
+        for i in range(-(value.width//2), (value.width+1)//2):
+            for j in range(-(value.width//2), (value.width+1)//2):
+                # print(i, j)
+                self.set_tile(
+                    (item[0]+i, item[0]+j),
+                    value
+                )
