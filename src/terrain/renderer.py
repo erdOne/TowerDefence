@@ -53,7 +53,7 @@ def render_wall(pos, terrain, variant, parent, loader, threads):
 
     def task():
         model = loader.loadModel(
-            path.join(getcwd(), "models", f"{mod}_low_flat.bam"))
+            path.abspath(f"models/{mod}_low_flat.bam").replace('\\', '/'))
         model.clearModelNodes()
         model.flattenStrong()
         model.setHpr(orient*90+180, 90, 0)

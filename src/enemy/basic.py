@@ -22,7 +22,7 @@ class Enemy:
 
     def __init__(self, loader, parent, path_finder, pos):
         self.model = loader.loadModel(
-            path.join(getcwd(), "models", f"{self.name}.dae"))
+            path.abspath(f"models/{self.name}.dae").replace('\\', '/'))
         self.model.reparentTo(parent)
         self.model.setPos(pos)
         self.model.setScale(10.0)
