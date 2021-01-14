@@ -1,7 +1,7 @@
 # pylint: disable=missing-function-docstring
 """General Utility functions."""
 
-import asyncio
+from os import path
 
 
 def generate_2d_array(x_size, y_size=None, default=None):
@@ -54,3 +54,6 @@ def color(hex_col):
         int(hex_col[4:6], 16)/255.0,
         1
     )
+
+def abspath(paths):
+    path.splitdrive(path.abspath(paths))[1].replace('\\', '/')

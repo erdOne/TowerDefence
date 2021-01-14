@@ -5,6 +5,7 @@ from threading import Thread
 
 from panda3d.core import Vec3
 import config
+from utils import abspath
 
 
 def EnemyFactory(loader, parent, path_finder):
@@ -21,8 +22,7 @@ class Enemy:
     omega = 720
 
     def __init__(self, loader, parent, path_finder, pos):
-        self.model = loader.loadModel(
-            path.abspath(f"models/{self.name}.dae").replace('\\', '/'))
+        self.model = loader.loadModel(abspath(f"models/{self.name}.dae"))
         self.model.reparentTo(parent)
         self.model.setPos(pos)
         self.model.setScale(10.0)

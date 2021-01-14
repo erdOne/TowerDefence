@@ -7,6 +7,7 @@ from panda3d.core import (CollisionNode, CollisionBox, Point3, Vec3, NodePath, C
 from third_party.geom import GeomBuilder
 from config import map_params
 from tiles import Wall, Empty
+from utils import abspath
 
 
 class Threads:
@@ -52,8 +53,7 @@ def render_wall(pos, terrain, variant, parent, loader, threads):
         mod = f"convex_{variant}"
 
     def task():
-        model = loader.loadModel(
-            path.abspath(f"models/{mod}_low_flat.bam").replace('\\', '/'))
+        model = loader.loadModel(abspath(f"models/{mod}_low_flat.bam"))
         model.clearModelNodes()
         model.flattenStrong()
         model.setHpr(orient*90+180, 90, 0)
