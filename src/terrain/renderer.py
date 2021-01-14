@@ -1,5 +1,5 @@
 """Generate a geom node from heightmap."""
-from os import getcwd
+from os import getcwd, path
 from threading import Thread, active_count
 
 from panda3d.core import (CollisionNode, CollisionBox, Point3, Vec3, NodePath, CardMaker, TextureStage)
@@ -52,7 +52,8 @@ def render_wall(pos, terrain, variant, parent, loader, threads):
         mod = f"convex_{variant}"
 
     def task():
-        model = loader.loadModel(getcwd()+f"/models/{mod}_low_flat.bam")
+        model = loader.loadModel(
+            path.join(getcwd(), "models", f"{mod}_low_flat.bam"))
         model.clearModelNodes()
         model.flattenStrong()
         model.setHpr(orient*90+180, 90, 0)

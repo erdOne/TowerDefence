@@ -1,5 +1,5 @@
 
-from os import getcwd
+from os import getcwd, path
 from math import atan2, pi
 from threading import Thread
 
@@ -21,7 +21,8 @@ class Enemy:
     omega = 720
 
     def __init__(self, loader, parent, path_finder, pos):
-        self.model = loader.loadModel(getcwd()+f"/models/{self.name}.dae")
+        self.model = loader.loadModel(
+            path.join(getcwd(), "models", f"{self.name}.dae"))
         self.model.reparentTo(parent)
         self.model.setPos(pos)
         self.model.setScale(10.0)
@@ -47,7 +48,6 @@ class Enemy:
             task()
         else:
             Thread(target=task).start()
-
 
     def move(self, dt, get_tile):
         """Move the Enemy according to pathfinder."""
