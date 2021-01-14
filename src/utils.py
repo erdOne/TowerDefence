@@ -56,4 +56,4 @@ def color(hex_col):
     )
 
 def abspath(paths):
-    path.splitdrive(path.abspath(paths))[1].replace('\\', '/')
+    return path.splitdrive(path.abspath(paths))[1].replace('\\', '/')
