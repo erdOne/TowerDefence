@@ -30,7 +30,7 @@ loadPrcFileData("", "framebuffer-stencil #t")
 loadPrcFileData("", "want-pstats 1")
 # loadPrcFileData('', 'notify-level spam\ndefault-directnotify-level info')
 
-sys.setrecursionlimit(1000000)
+# sys.setrecursionlimit(1000000)
 
 nout = MultiplexStream()
 Notify.ptr().setOstreamPtr(nout, 0)
@@ -78,6 +78,7 @@ class MyApp:
 
         self.player = Player()
         self.base.taskMgr.add(lambda task: self.terrain.start_up(), "start up")
+        self.mouse_pos = (0.0, 0.0)
         self.base.taskMgr.add(self.move_player_task, "move_player_task")
         self.base.taskMgr.add(self.move_enemies_task, "move_enemies_task")
         self.base.setFrameRateMeter(True)
@@ -146,7 +147,7 @@ class MyApp:
             self.paused = False
             props = WindowProperties()
             props.setCursorHidden(True)
-            props.setMouseMode(WindowProperties.M_relative)
+            props.setMouseMode(WindowProperties.M_confined)
             self.base.win.requestProperties(props)
         else:
             self.paused = True
@@ -166,10 +167,14 @@ class MyApp:
                 self.key_state, ClockObject.getGlobalClock().getDt(),
                 lambda pos: self.terrain.get_tile(pos).walkable
             )
-            self.player.update_hpr((
-                self.base.mouseWatcherNode.getMouseX(),
-                self.base.mouseWatcherNode.getMouseY()
-            ))
+            self.mouse_pos = (
+                self.mouse_pos[0] + self.base.mouseWatcherNode.getMouseX(),
+                self.mouse_pos[1] + self.base.mouseWatcherNode.getMouseY(),
+            )
+            self.player.update_hpr(self.mouse_pos)
+            self.base.win.movePointer(
+                0, self.base.win.getXSize() // 2, self.base.win.getYSize() // 2
+            )
             self.base.camera.setPos(self.player.pos)
             self.minimap.set_pos(self.player.pos, self.player.hpr)
             self.base.camera.setHpr(self.player.hpr)
