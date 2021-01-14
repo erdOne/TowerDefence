@@ -1,13 +1,43 @@
 """Generate a geom node from heightmap."""
 from os import getcwd
+from threading import Thread, active_count
+
 from panda3d.core import (CollisionNode, CollisionBox, Point3, Vec3, NodePath, CardMaker, TextureStage)
 
-from geom import GeomBuilder
+from third_party.geom import GeomBuilder
 from config import map_params
 from tiles import Wall, Empty
 
 
-def render_wall(pos, terrain, variant, parent, loader):
+class Threads:
+    def __init__(self, total, callback):
+        self.total = total
+        self.callback = callback
+        self.threads = []
+        self.active_thread = False
+
+    def append(self, func):
+        thread_count = len(self.threads)
+
+        def task():
+            func()
+            self.total -= 1
+            if not self.total:
+                Thread(target=self.callback).start()
+            if len(self.threads) <= thread_count+1:
+                self.active_thread = False
+            else:
+                self.threads[thread_count+1].start()
+
+        self.threads.append(Thread(target=task))
+        if not self.active_thread:
+            self.active_thread = True
+            self.threads[-1].start()
+
+
+
+
+def render_wall(pos, terrain, variant, parent, loader, threads):
     """Renders the wall."""
     if not any(terrain):
         return
@@ -21,24 +51,16 @@ def render_wall(pos, terrain, variant, parent, loader):
         orient = terrain.index(True)
         mod = f"convex_{variant}"
 
-    # def callback(model, orient, parent, pos):
-    #     model.setHpr(orient*90+180, 90, 0)
-    #     model.reparentTo(parent)
-    #     model.setPos(Vec3(pos)+Vec3(10, 10, 0))
-    #     model.setScale(10.0)
-    #     pass
-    #
-    # loader.loadModel(getcwd()+f"/models/{type}_flat.bam",
-    #                  callback=lambda model, *args: loader.asyncFlattenStrong(
-    #                     model, False, callback, [*args]),
-    #                  extraArgs=[orient, parent, pos]
-    #                  )
-    model = loader.loadModel(getcwd()+f"/models/{mod}_low_flat.bam")
-    model.flattenStrong()
-    model.setHpr(orient*90+180, 90, 0)
-    model.reparentTo(parent)
-    model.setPos(Vec3(pos)+Vec3(10, 10, 0))
-    model.setScale(10.0)
+    def task():
+        model = loader.loadModel(getcwd()+f"/models/{mod}_low_flat.bam")
+        model.clearModelNodes()
+        model.flattenStrong()
+        model.setHpr(orient*90+180, 90, 0)
+        model.reparentTo(parent)
+        model.setPos(Vec3(pos)+Vec3(10, 10, 0))
+        model.setScale(10.0)
+
+    threads.append(task)
 
 
 class TerrainRenderer:
@@ -91,6 +113,19 @@ class TerrainRenderer:
         def get(i, j):
             return isinstance(self.get_tile(i, j), Wall)
 
+        wall_count = 0
+        for i in range(map_size-1):
+            for j in range(map_size-1):
+                if any([get(i, j), get(i+1, j),
+                            get(i+1, j+1), get(i, j+1)]):
+                    wall_count += 1
+
+        def callback():
+            self.geom_node.clearModelNodes()
+            self.geom_node.flattenStrong()
+
+        threads = Threads(wall_count, callback)
+
         for i in range(map_size-1):
             for j in range(map_size-1):
                 current_position = (
@@ -103,10 +138,9 @@ class TerrainRenderer:
                         get(i+1, j+1), get(i, j+1)],
                     ((i+j) & 1)+1,
                     self.geom_node,
-                    loader
+                    loader,
+                    threads
                 )
-        self.geom_node.clearModelNodes()
-        self.geom_node.flattenStrong()
 
     def create_collision(self):
         """Creates self.coll_node from self.terrain_map."""
@@ -138,7 +172,6 @@ class TerrainRenderer:
         map_size = len(self.terrain_map)
         unit_size = map_params.unit_size
         start_pos = -map_size*unit_size/2
-        colors = map_params.colors
 
         for i in range(map_size):
             for j in range(map_size):

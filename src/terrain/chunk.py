@@ -4,7 +4,6 @@ from math import atan2, pi
 from terrain.maze_terrain_generator import MazeTerrainGenerator
 from terrain.renderer import TerrainRenderer
 import config
-from utils import directions, Object
 from tiles import Center
 
 

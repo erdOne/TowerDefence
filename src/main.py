@@ -1,6 +1,5 @@
 """The main module."""
 
-from math import pi, sin, cos
 import sys
 from panda3d.core import (
     DirectionalLight,
@@ -12,13 +11,15 @@ from panda3d.core import (
     WindowProperties,
     loadPrcFileData,
     BitMask32,
-    Fog
+    Fog,
+    Vec3
 )
 # from panda3d.core import loadPrcFileData
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 
 from player import Player
+from enemy.basic import EnemyFactory
 from minimap import Minimap
 from utils import Object, directions
 from terrain.terrain import Terrain
@@ -53,22 +54,32 @@ class MyApp:
         )
         self.minimap.node_path.reparentTo(self.base.render)
 
-        self.light_nodes = self.set_lights()
-        self.fog = self.set_fog()
+        # self.light_nodes =
+        self.set_lights()
+        self.set_fog()
 
         self.key_state = dict.fromkeys(
             Object.values(config.key_map.character), False)
         self.set_key_state_handler()
+
         self.paused = True
         self.toggle_pause()
+
+        Enemy = EnemyFactory(
+            self.base.loader, self.base.render, self.terrain.path_finder
+        )
+
+        self.enemies = [Enemy(Vec3(100, 100, 0)), Enemy(Vec3(100, 110, 0))]
+
         self.base.accept(config.key_map.utility.pause, self.toggle_pause)
         self.base.accept("q", self.debug)
         self.base.cam.node().setCameraMask(BitMask32.bit(0))
         self.base.setBackgroundColor(*config.map_params.colors.sky)
 
         self.player = Player()
-        self.base.taskMgr.add(self.move_player_task, "move_player_task")
         self.base.taskMgr.add(lambda task: self.terrain.start_up(), "start up")
+        self.base.taskMgr.add(self.move_player_task, "move_player_task")
+        self.base.taskMgr.add(self.move_enemies_task, "move_enemies_task")
         self.base.setFrameRateMeter(True)
 
     # Define a procedure to move the camera.
@@ -81,8 +92,11 @@ class MyApp:
         # )
         # self.base.camera.lookAt(0, 0, 0)
         # # print(self.camera.getPos(), self.camera.getHpr())
-        print("debug")
-        self.base.render.analyze()
+        Enemy = EnemyFactory(
+            self.base.loader, self.base.render, self.terrain.path_finder
+        )
+        self.enemies.append(Enemy(Vec3(100, 100, 0)))
+        # self.set_lights()
 
     def set_fog(self):
         """Set render distance of camera."""
@@ -90,7 +104,7 @@ class MyApp:
         fog.setColor(0.7, 0.7, 0.7)
         fog.setExpDensity(0.01)
         # self.terrain.geom_node.setFog(fog)
-        self.base.camLens.setFar(300.0)
+        self.base.camLens.setFar(4000.0)
         return fog
 
     def set_lights(self):
@@ -160,6 +174,14 @@ class MyApp:
             self.minimap.set_pos(self.player.pos, self.player.hpr)
             self.base.camera.setHpr(self.player.hpr)
             self.terrain.update_player_pos(tuple(self.player.pos))
+        return Task.cont
+
+    def move_enemies_task(self, task):  # pylint: disable=unused-argument
+        """The task that handles enemy movement."""
+        if not self.paused:
+            for enemy in self.enemies:
+                enemy.move(ClockObject.getGlobalClock().getDt(),
+                           self.terrain.get_tile)
         return Task.cont
 
     def run(self):

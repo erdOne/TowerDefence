@@ -1,15 +1,5 @@
 """Configurations."""
-from utils import Object
-
-
-def color(hex_col):
-    """Hex to rgb triple."""
-    return (
-        int(hex_col[0:2], 16)/255.0,
-        int(hex_col[2:4], 16)/255.0,
-        int(hex_col[4:6], 16)/255.0,
-        1
-    )
+from utils import Object, color
 
 
 map_params = Object(
@@ -17,9 +7,9 @@ map_params = Object(
     height=20,
     cell_size=3,
     wall_width=1,
-    field_size=16,
+    field_size=15,
     core_size=3,
-    center_size=4,
+    center_size=3,
     seed=10,
     colors=Object(
         wall=(1, 0.5, 0.5, 1),

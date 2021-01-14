@@ -44,3 +44,13 @@ directions = Object(
     left=(-1, 0),
     right=(1, 0)
 )
+
+
+def color(hex_col):
+    """Hex to rgb triple."""
+    return (
+        int(hex_col[0:2], 16)/255.0,
+        int(hex_col[2:4], 16)/255.0,
+        int(hex_col[4:6], 16)/255.0,
+        1
+    )

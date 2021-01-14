@@ -67,5 +67,5 @@ class MazeTerrainGenerator():
         for i in range(self.map_size):
             for j in range(self.map_size):
                 self.maze_map[i][j] = \
-                    Wall((i, j)) if self.maze_map[i][j] else Floor((i, j))
+                    Wall() if self.maze_map[i][j] else Floor()
         return self.maze_map

@@ -4,6 +4,7 @@ from sortedcontainers import SortedDict
 from panda3d.core import NodePath, BitMask32, StencilAttrib
 
 from terrain.chunk import Chunk
+from terrain.pathfinder import PathFinder
 from config import map_params
 from tiles import Empty
 
@@ -40,6 +41,7 @@ class Terrain:
              + (map_params.field_size-1)*map_params.wall_width)
         )
         self.active_chunks = set()
+        self.path_finder = PathFinder(self.get_tile)
 
     def generate(self, pos):
         """Generates everything."""
@@ -90,8 +92,8 @@ class Terrain:
             self.active_chunks.remove(chunk_no)
             self.chunk_map[chunk_no].hide()
 
-        for chunk_no in new_set - self.active_chunks:
-            self.show(chunk_no)
+        # for chunk_no in new_set - self.active_chunks:
+        #     self.show(chunk_no)
 
     def get_tile(self, pos):
         if self.get_chunk_no(pos) not in self.chunk_map:
@@ -102,6 +104,23 @@ class Terrain:
 
     def start_up(self):
         """Generate the first nine chunks."""
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                self.show((i, j))
+        self.show((0, 0))
+        # for i in range(-1, 2):
+        #     for j in range(-1, 2):
+        #         self.show((i, j))
+
+    def __getitem__(self, item):
+        return self.get_tile(
+            (item[0] * map_params.unit_size, item[1] * map_params.unit_size)
+        )
+
+    def set_tile(self, item, value):
+        item = item[0] * map_params.unit_size, item[1] * map_params.unit_size
+        if self.get_chunk_no(item) not in self.chunk_map:
+            raise IndexError
+        self.chunk_map[
+            self.get_chunk_no(item)
+        ].set_tile(self.get_chunk_coord(item), value)
+
+    def __setitem__(self, item, value):
+        pass
