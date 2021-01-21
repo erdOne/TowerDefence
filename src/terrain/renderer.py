@@ -28,12 +28,12 @@ class Threads:
             if len(self.threads) <= thread_count+1:
                 self.active_thread = False
             else:
-                self.threads[thread_count+1].start()
+                Thread(target=self.threads[thread_count+1]).start()
 
-        self.threads.append(Thread(target=task))
+        self.threads.append(task)
         if not self.active_thread:
             self.active_thread = True
-            self.threads[-1].start()
+            Thread(target=self.threads[-1]).start()
 
 
 

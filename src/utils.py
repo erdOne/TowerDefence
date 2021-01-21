@@ -58,7 +58,8 @@ def color(hex_col):
 
 
 def abspath(paths):
-    return path.splitdrive(path.abspath(paths))[1].replace('\\', '/')
+    return path.splitdrive(path.abspath(paths))[1].replace('\\', '/') \
+        .replace('/models/models', '/models')
 
 
 def set_default(self, attr, val):
