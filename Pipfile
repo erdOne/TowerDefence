@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 sortedcontainers = "*"
 panda3d = "*"
-numpy = "*"
 
 [dev-packages]
 

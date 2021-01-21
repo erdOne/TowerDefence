@@ -1,6 +1,7 @@
-from math import hypot
+"""The class of the bullet shooted by the ShootTower."""
+
 from panda3d.core import Vec3
-from enemy.basic import Enemy
+from enemy import Enemy
 from tiles import Tile
 from model import Model
 
@@ -27,19 +28,19 @@ class Bullet(Model):
         self.model.setPos(pos)
 
         if pos[2] <= 0:
-            self.hit(None)
+            self.collide(None)
             return
         for enemy in enemies:
             if enemy.collide(pos):
-                self.hit(enemy)
+                self.collide(enemy)
                 return
         cur_tile = self.get_tile((pos[0], pos[1]))
         if cur_tile != self.parent_tower and pos[2] <= cur_tile.height:
-            self.hit(None)
+            self.collide(None)
             # print("hit", direct, pos, cur_tile)
             return
 
-    def hit(self, obj):
+    def collide(self, obj):
         self.model.removeNode()
         self.is_active = False
         if obj is None:

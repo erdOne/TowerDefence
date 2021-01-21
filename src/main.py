@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """The main module."""
 
 from math import cos, sin, pi
@@ -27,12 +28,11 @@ from direct.filter.CommonFilters import CommonFilters
 from direct.gui.OnscreenText import OnscreenText
 
 from player import Player
-from enemy.basic import Kikiboss, Dabi
+from enemy import Kikiboss, Dabi
 from minimap import Minimap
 from utils import Object, directions
 from terrain.terrain import Terrain
-from model import Model
-from towers import Tower, ShootTower
+from towers import Tower
 from tiles import Floor, Empty
 from selection import Selection
 import config

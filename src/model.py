@@ -1,8 +1,11 @@
+"""The class of general actors, having a model to be loaded."""
 from utils import abspath, set_default
 from panda3d.core import Vec3, VBase3, Shader, BitMask32
 
+
 class Model:
     max_hp = 1
+
     def __init__(self):
         set_default(self, "pos", Vec3(0, 0, 0))
         set_default(self, "hpr", VBase3(0, 90, 0))
@@ -14,6 +17,7 @@ class Model:
         self.active = False
 
     def generate(self, loader, parent, get_tile):
+        """Load in the model into self.model."""
         self.model = loader.loadModel(abspath(f"models/{self.name}.dae"))
         self.model.clearModelNodes()
         self.model.flattenStrong()
@@ -28,6 +32,7 @@ class Model:
         del self.hpr
 
     def select(self, selected):
+        """Set selected state. Emit glow if selected."""
         if not self.active:
             return
         if selected:
@@ -47,8 +52,5 @@ class Model:
         return self.hp > 0
 
     def get_text(self):
+        """Generate the text being displayed when selected."""
         return f"{self.name}\nHP: {self.hp:.{2}f}/{self.max_hp}"
-
-        # print(self.model.findAllMatches("**/*"))
-        # self.model.clearModelNodes()
-        # self.model.flattenStrong()

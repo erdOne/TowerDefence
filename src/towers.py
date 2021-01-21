@@ -106,6 +106,7 @@ class ShootTower(Tower):
         self.move_bullet(dt, enemies)
         self.aim(dt, enemies)
 
+
 class WallTower(Tower):
     width = 1
     name = "icecream"

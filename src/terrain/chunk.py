@@ -28,13 +28,6 @@ class Chunk(TerrainRenderer):
         self.create_geom(loader)
         self.create_minimap()
 
-    def set_center(self):
-        csize = config.map_params.center_size // 2
-        fsize = len(self.terrain_map) // 2
-        for i in range(fsize-csize, csize+fsize+1):
-            for j in range(fsize-csize, csize+fsize+1):
-                self.terrain_map[i][j] = Center()
-
     def set_tile(self, pos, value):
         i, j = pos
         self.terrain_map[i][j] = value

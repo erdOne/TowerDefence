@@ -1,9 +1,9 @@
 """Contains all tiles."""
-from math import atan2, pi
 
-from utils import color, abspath
+from panda3d.core import Point3, CardMaker, NodePath
+
+from utils import color
 from config import map_params
-from panda3d.core import Point3, CardMaker, NodePath, Vec3
 
 
 class Tile:
