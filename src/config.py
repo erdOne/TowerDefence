@@ -1,6 +1,7 @@
 """Configurations."""
 from utils import Object, color
 
+infinite_generation = False
 
 map_params = Object(
     unit_size=10,

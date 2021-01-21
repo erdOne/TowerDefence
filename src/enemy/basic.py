@@ -133,3 +133,22 @@ class Kikiboss(Enemy):
     def trample(self, dt, tile):
         self.model.setHpr(self.model.getHpr()[0]+dt*self.omega, 90, 0)
         super().trample(dt, tile)
+
+
+class Dabi(Enemy):
+    name = "Dabi"
+    cd_max = 20
+    speed = 5.0
+    dps = 40
+    omega = 180
+    height = 20
+    radius = 8
+    scale = 30.0
+    max_hp = 100
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+    def trample(self, dt, tile):
+        self.model.setHpr(self.model.getHpr()[0]+dt*self.omega, 90, 0)
+        super().trample(dt, tile)

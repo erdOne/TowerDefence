@@ -27,7 +27,7 @@ from direct.filter.CommonFilters import CommonFilters
 from direct.gui.OnscreenText import OnscreenText
 
 from player import Player
-from enemy.basic import Kikiboss
+from enemy.basic import Kikiboss, Dabi
 from minimap import Minimap
 from utils import Object, directions
 from terrain.terrain import Terrain
@@ -119,7 +119,7 @@ class MyApp:
         self.base.taskMgr.doMethodLater(
             1, self.clock_task, 'clock_task', extraArgs=[rand])
         self.rounds = 0
-        self.coin = 0
+        self.coin = 40
         self.base.setFrameRateMeter(True)
 
     def set_fog(self):
@@ -281,7 +281,8 @@ class MyApp:
         num = (self.rounds + config.game.sep//2) // config.game.sep
         for _ in range(num):
             theta = rand.uniform(0, 2*pi)
-            self.enemies.add(Kikiboss(Vec3(cos(theta), sin(theta), 0)*radius))
+            enemy = Kikiboss if _ % 5 or num % 5 else Dabi
+            self.enemies.add(enemy(Vec3(cos(theta), sin(theta), 0)*radius))
         return Task.again
 
     def clock_task(self, rand):

@@ -59,7 +59,7 @@ class ShootTower(Tower):
     cannon_height = 10
     scale = 10.0
     cd = 0.5
-    cost = 15
+    cost = 40
     color = color("FFF000")
 
     def __init__(self, *args):
@@ -112,7 +112,7 @@ class WallTower(Tower):
     max_hp = 50
     height = 15.
     scale = 10.0
-    cost = 25
+    cost = 30
     color = color("F0E000")
 
 

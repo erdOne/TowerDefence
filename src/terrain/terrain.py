@@ -8,6 +8,7 @@ from panda3d.core import NodePath, BitMask32, StencilAttrib
 from terrain.chunk import Chunk
 from terrain.pathfinder import PathFinder
 from config import map_params
+import config
 from tiles import Empty
 from towers import Center, Tower
 
@@ -99,8 +100,9 @@ class Terrain:
             self.active_chunks.remove(chunk_no)
             self.chunk_map[chunk_no].hide()
 
-        for chunk_no in new_set - self.active_chunks:
-            self.show(chunk_no)
+        if config.infinite_generation:
+            for chunk_no in new_set - self.active_chunks:
+                self.show(chunk_no)
 
     def get_tile(self, pos):
         if self.get_chunk_no(pos) not in self.chunk_map:
@@ -114,9 +116,10 @@ class Terrain:
         self.show((0, 0))
         self[(0, 0)] = Center((0, 0))
         self[(0, 0)].generate(self.loader, self.geom_node, None)
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                self.show((i, j))
+        if config.infinite_generation:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    self.show((i, j))
 
     def __getitem__(self, item):
         return self.get_tile(
