@@ -5,7 +5,7 @@ from os import path
 # import math
 # from config import map_params
 
-# from panda3d import Vec3
+from panda3d.core import Vec3, VBase3, Quat
 
 
 def generate_2d_array(x_size, y_size=None, default=None):
@@ -61,6 +61,16 @@ def color(hex_col):
 
 def abspath(paths):
     return path.splitdrive(path.abspath(paths))[1].replace('\\', '/')
+
+
+def set_default(self, attr, val):
+    if not hasattr(self, attr):
+        setattr(self, attr, val)
+
+def get_unit(hpr):
+    q = Quat()
+    q.setHpr(hpr)
+    return q.xform(Vec3(0, 1, 0))
 
 # def place(a, l):
 #     return (round(a[0]/l), round(a[1]/l))

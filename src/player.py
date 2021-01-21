@@ -1,10 +1,10 @@
 """The player."""
-from math import atan2, pi, sin, cos, floor
+from math import atan2, pi, sin, cos, floor, hypot
 
 from panda3d.core import Vec3, LVecBase3
 
 import config
-from utils import directions
+from utils import directions, get_unit
 
 
 class Player:
@@ -75,3 +75,20 @@ class Player:
             mouse_pos[1]*config.mouse_params.pitch_speed,
             0
         )
+
+    def view(self, get_tile, enemies):
+        pos = Vec3(self.pos)
+        direction_unit = get_unit(self.hpr)
+        distance = config.player.reach
+        for _ in range(int(distance)):
+            pos += direction_unit
+            if get_tile(pos).height < -1:
+                return None, pos
+            if pos[2] <= 0:
+                return get_tile(pos), pos
+            for enemy in enemies:
+                if enemy.collide(pos):
+                    return enemy, pos
+            if pos[2] < get_tile(pos).height:
+                return get_tile(pos), pos
+        return None, None

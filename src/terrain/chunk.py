@@ -4,7 +4,7 @@ from math import atan2, pi
 from terrain.maze_terrain_generator import MazeTerrainGenerator
 from terrain.renderer import TerrainRenderer
 import config
-from tiles import Center
+from towers import Center
 
 
 class Chunk(TerrainRenderer):
@@ -38,7 +38,7 @@ class Chunk(TerrainRenderer):
     def set_tile(self, pos, value):
         i, j = pos
         self.terrain_map[i][j] = value
-        value.generate((i, j)).reparentTo(self.minimap_node)
+        value.generate_map((i, j)).reparentTo(self.minimap_node)
 
     def show(self):
         self.geom_node.show()

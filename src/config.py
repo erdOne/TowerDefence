@@ -31,7 +31,8 @@ key_map = Object(
 )
 
 player = Object(
-    size=2
+    size=2,
+    reach=50
 )
 
 physics = Object(
@@ -53,4 +54,8 @@ minimap = Object(
     colors=Object(
         player=(0.5, 1, 0.5, 1)
     )
+)
+
+game = Object(
+    sep=20
 )

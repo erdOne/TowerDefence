@@ -1,12 +1,15 @@
 """Class of the whole terrain."""
 
+from math import floor
+
 from sortedcontainers import SortedDict
 from panda3d.core import NodePath, BitMask32, StencilAttrib
 
 from terrain.chunk import Chunk
 from terrain.pathfinder import PathFinder
 from config import map_params
-from tiles import Empty, Proxy, Center, Tower
+from tiles import Empty
+from towers import Center, Tower
 
 constant_one_stencil = StencilAttrib.make(
     1, StencilAttrib.SCFAlways,
@@ -64,15 +67,15 @@ class Terrain:
 
     def get_chunk_no(self, pos):
         return (
-            (int(pos[0]) + self.chunk_size//2) // self.chunk_size,
-            (int(pos[1]) + self.chunk_size//2) // self.chunk_size
+            (floor(pos[0] + self.chunk_size/2)) // self.chunk_size,
+            (floor(pos[1] + self.chunk_size/2)) // self.chunk_size
         )
 
     def get_chunk_coord(self, pos):
         return (
-            (int(pos[0]) + self.chunk_size//2)
+            (floor(pos[0] + self.chunk_size/2))
                 % self.chunk_size // map_params.unit_size,
-            (int(pos[1]) + self.chunk_size//2)
+            (floor(pos[1] + self.chunk_size/2))
                 % self.chunk_size // map_params.unit_size
         )
 
@@ -87,7 +90,7 @@ class Terrain:
         """Check if position of player is not generated."""
         new_set = set()
 
-        pos = (int(pos[0]) // self.chunk_size, int(pos[1]) // self.chunk_size)
+        pos = (floor(pos[0]) // self.chunk_size, floor(pos[1]) // self.chunk_size)
         for i in range(pos[0], pos[0]+2):
             for j in range(pos[1], pos[1]+2):
                 new_set.add((i, j))
@@ -96,8 +99,8 @@ class Terrain:
             self.active_chunks.remove(chunk_no)
             self.chunk_map[chunk_no].hide()
 
-        # for chunk_no in new_set - self.active_chunks:
-        #     self.show(chunk_no)
+        for chunk_no in new_set - self.active_chunks:
+            self.show(chunk_no)
 
     def get_tile(self, pos):
         if self.get_chunk_no(pos) not in self.chunk_map:
@@ -109,11 +112,11 @@ class Terrain:
     def start_up(self):
         """Generate the first nine chunks."""
         self.show((0, 0))
-        self[(0, 0)] = Center(self.loader, self.geom_node, (0, 0))
-        self[(4, 4)] = Tower(self.loader, self.geom_node, (4, 4))
-        # for i in range(-1, 2):
-        #     for j in range(-1, 2):
-        #         self.show((i, j))
+        self[(0, 0)] = Center((0, 0))
+        self[(0, 0)].generate(self.loader, self.geom_node, None)
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                self.show((i, j))
 
     def __getitem__(self, item):
         return self.get_tile(
@@ -135,6 +138,6 @@ class Terrain:
             for j in range(-(value.width//2), (value.width+1)//2):
                 # print(i, j)
                 self.set_tile(
-                    (item[0]+i, item[0]+j),
+                    (item[0]+i, item[1]+j),
                     value
                 )

@@ -173,5 +173,5 @@ class TerrainRenderer:
 
         for i in range(map_size):
             for j in range(map_size):
-                self.get_tile(i, j).generate((i, j)).reparentTo(
+                self.get_tile(i, j).generate_map((i, j)).reparentTo(
                     self.minimap_node)
