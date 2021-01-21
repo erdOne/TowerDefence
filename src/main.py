@@ -39,7 +39,7 @@ import config
 
 
 loadPrcFileData("", "framebuffer-stencil #t")
-loadPrcFileData("", "want-pstats 1")
+# loadPrcFileData("", "want-pstats 1")
 # loadPrcFileData('', 'notify-level spam\ndefault-directnotify-level info')
 
 # sys.setrecursionlimit(1000000)
@@ -120,7 +120,7 @@ class MyApp:
             1, self.clock_task, 'clock_task', extraArgs=[rand])
         self.rounds = 0
         self.coin = 40
-        self.base.setFrameRateMeter(True)
+        # self.base.setFrameRateMeter(True)
 
     def set_fog(self):
         """Set render distance of camera."""
